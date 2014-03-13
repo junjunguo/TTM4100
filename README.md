@@ -19,7 +19,8 @@ Happy hacking!
 
 2. Overall Requirements
 
-You will implement a simple protocol for a command line interface (cli) chat client that communicates with a server backend. The protocol uses the JavaScript Object Notation (JSON) format. JSON offers a readable and human friendly format for serializing data and objects when sending the information over the web, between processes and / or between programming environments; as well as for storing / retrieving information. It has become a standard in modern web applications through its heavy use within application programming interfaces (API) bycompanies such as Twitter, Instagram and Facebook. For more information on the JSON
+You will implement a simple protocol for a command line interface (cli) chat client that communicates with a server backend. The protocol uses the JavaScript Object Notation (JSON) format. JSON offers a readable and human friendly format for serializing data and objects when sending the information over the web, between processes and / or between programming environments; as well as for storing / retrieving information. It has become a standard in modern web applications through its heavy use within application programming interfaces (API) by
+companies such as Twitter, Instagram and Facebook. For more information on the JSON
 format, you can refer to:
 
 
@@ -66,7 +67,8 @@ or
 }
 
 
-or{
+or
+{
 'response': 'login',
 'error': 'Name already taken!',
 'username': <username>
@@ -108,7 +110,8 @@ or this message to only the client who sent the message:
 
 
 NOTE:
-Since a message can be sent out at any time, you can use this to for instance send out notifications about people logging in and out (if you want to). It is further not required that there is a link between the messages and the user sending it, but it should be easy to format the message like this: <username> said @ <timestamp>: <the message>.3.3 Log out client
+Since a message can be sent out at any time, you can use this to for instance send out notifications about people logging in and out (if you want to). It is further not required that there is a link between the messages and the user sending it, but it should be easy to format the message like this: <username> said @ <timestamp>: <the message>.
+3.3 Log out client
 
 A logged-in client can log out by sending this message to the server:
 
@@ -150,7 +153,8 @@ Other functions that is not mandatory, but can be added:
 ○  Removing messages
    Chat rooms
 ○  creating chat rooms
-○  logging into chat rooms4. Deadlines and deliverables
+○  logging into chat rooms
+4. Deadlines and deliverables
 
 
 4.1 KTN1: (Project plan)  Deliver by 03.03.14
