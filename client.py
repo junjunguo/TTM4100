@@ -4,6 +4,7 @@ KTN-project 2013 / 2014
 import socket
 from MessageWorker import *
 from time import gmtime, strftime
+#sdfgdhdjsdofighsdfkljghdfpuiodfjhnsdgfjkndsdgfjkh test
 
 class Client(object):
 
