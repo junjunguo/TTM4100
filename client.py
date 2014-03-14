@@ -4,6 +4,7 @@ KTN-project 2013 / 2014
 import socket
 from MessageWorker import *
 from time import gmtime, strftime
+
 class Client(object):
 
     def __init__(self):
@@ -17,8 +18,7 @@ class Client(object):
         print "MessageWorker:",messageThread.name
 
     def message_received(self,message,connection):
-        #self.connection.recv(1024).strip()
-        print message+" M "
+        print message
 
     def connection_closed(self, connection):
         connection.close()
@@ -42,6 +42,5 @@ if __name__ == "__main__":
         if r == 'logut':
             on = False
         tid = strftime("%a, %d %b %Y %H:%M:%S", gmtime())
-        if r:
-            client.send(name+' said @ '+tid+' : '+r)
-client.force_disconnect()        
+        client.send(name+' said @ '+tid+' : '+r)
+client.force_disconnect()
