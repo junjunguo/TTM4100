@@ -4,6 +4,7 @@ KTN-project 2013 / 2014
 import socket
 from MessageWorker import *
 from time import gmtime, strftime
+import json
 
 class Client(object):
 
@@ -25,22 +26,38 @@ class Client(object):
         print "Connection: "+connection+" closed!"
 
     def send(self, data):
-        self.connection.sendall(data)
+        if ( data.startswith("login")):
+            request = {
+                'request': 'login',
+                'username': data[6:]
+            }
+        elif ( data.startswith("logout")):
+            request = {
+                'request': 'logout'
+            }
+        else:
+            tid = strftime("%a, %d %b %Y %H:%M:%S", gmtime())
+            request = {
+                'request': 'message',
+                'message': ' said @ '+tid+' : '+data
+            }
+        # encode to python's type before sending
+        self.connection.sendall(json.dumps(request))
 
     def force_disconnect(self):
         self.connection.close()
         print "connection closed!"
 
-name = "Ole"
 
 if __name__ == "__main__":
     client = Client()
     client.start('localhost', 9988)
+    print "login required, please write 'login <username>'"
+    print "only contain alphanumerical characters and underscores"
     on = True
     while(on):
-        r = raw_input(name+': ')
-        if r == 'logut':
+        r = raw_input(': ')
+        if r == 'logout':
             on = False
-        tid = strftime("%a, %d %b %Y %H:%M:%S", gmtime())
-        client.send(name+' said @ '+tid+' : '+r)
-client.force_disconnect()
+        client.send(r)
+client.force_disconnect()        

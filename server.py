@@ -4,12 +4,12 @@ Very simple server implementation that should serve as a basis
 for implementing the chat server
 '''
 import SocketServer
-#import json
+import json
 
 # client list:
 clients = []
-#message stack
-messagestack = []
+# list of online names
+onlinenames = []
 
 '''
 The RequestHandler class for our server.
@@ -18,9 +18,7 @@ override the handle() method to implement communication to the
 client.
 '''
 class CLientHandler(SocketServer.BaseRequestHandler):
-    #def login(self, json_handle):
-       # user_name = json_handle.get('user_name')
-       # pattern = 
+
     def handle(self):
         #Get a reference to the socket object
         self.connection = self.request
@@ -29,30 +27,102 @@ class CLientHandler(SocketServer.BaseRequestHandler):
         # Get the remote port number of the socket
         self.port = self.client_address[1]
         print 'Client connected @' + self.ip + ':' + str(self.port)
-        clients.append(self)
         # Wait for data from the client
         on = True
+        clientname = ''
+        reply = ''
         while (on):
             # Check if the data exists
             data = self.connection.recv(1024).strip()
             # (recv could have returned due to a disconnect)
-            logut = data[-5:]
-            if logut == 'logut':
-                print data
-                self.send(data)
-                on = False
+            # decoding to json object
+            json_object = json.loads(data)
+            if json_object.get('request') == 'login':
+                reply, clientname = self.login(json_object)
+                print reply, clientname, 'line 42'
+                if('message' in reply) and ('logged in ! ' in reply['message']):
+                    clients.append(self)
+                # send to the client
+                else:
+                    self.send(json.dumps(reply))
+            elif json_object.get('request') == 'message':
+                if self in clients:
+                    print clientname , 'clientname'
+                    print clientname+json_object.get('message')
+                    reply = {
+                        'response': 'message',
+                        'message': clientname+json_object.get('message')
+                    }
+                else:
+                    thereply = {
+                        'response': 'message',
+                        'error': 'You are not logged in!',
+                        }
+                    self.send(json.dumps(thereply))
+            elif json_object.get('request') == 'logout':
+                if (self in clients):
+                    reply = {
+                        'response': 'logout',
+                        'username': clientname
+                    }
+                    clients.remove(self)
+                    onlinenames.remove(clientname)
+                    on = False
+                else:
+                    reply = {
+                        'response': 'logout',
+                        'error': 'Not logged in!',
+                        'username': clientname
+                    }
             else:
                 if data:
                     print data 
-                    messagestack.append(data)
                 else:
                     print 'Client disconnected!'
                     on = False
-            for client in clients:
-                client.send(data)
+                    onlinenames.remove(clientname)
+            #send response to all clients
+            if reply:
+                for client in clients:
+                    client.send(json.dumps(reply))
     def send (self, data):
-        self.connection.sendall(data.upper())
- 
+        self.connection.sendall(data)
+
+
+    def login(self, json_object):
+        print "loggin called ............."
+        username = json_object.get('username')
+        clientname = ''
+        if self.isValidName(username):
+            if username not in onlinenames:
+                onlinenames.append(username)
+                clientname = username
+                print onlinenames, clientname, 'onlinenames, clientname'
+                reply = {
+                    'response': 'message',
+                    'message': username+' logged in ! '
+                }
+            else:
+                reply = {
+                    'response': 'login',
+                    'error': 'Name already taken!',
+                    'username': username
+                }
+        else:
+            reply = {
+                'response': 'login',
+                'error': 'Invalid username!',
+                'username': username
+            }
+        return reply, clientname#json.dumps(reply)
+
+    def isValidName(self, name):
+        validString = "abcdefghijklmnopqrstuvwxyz_"
+        for c in name:
+            if (c not in validString):
+                return False
+        return True
+
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     allow_reuse_address = True
 
