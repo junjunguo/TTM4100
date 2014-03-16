@@ -16,10 +16,23 @@ class Client(object):
         messageThread = ReceiveMessageWorker(client, self.connection)
         messageThread.daemeon = True
         messageThread.start()
-        print "MessageWorker:",messageThread.name
+       # print "MessageWorker:",messageThread.name
 
     def message_received(self,message,connection):
-        print message
+        json_object = json.loads(message)
+        if (json_object.get('response') == 'message'):
+            if 'message' in json_object:
+                print json_object.get('message')
+            elif 'error' in json_object:
+                print json_object.get('error')
+        if (json_object.get('response') == 'logout'):
+            if 'username' in json_object:
+                print json_object.get('username'),json_object.get('username')
+            else:
+                print json_object.get('username'), json_object.get('error')
+
+        if (json_object.get('response') == 'login'):
+            print json_object.get('username'), json_object.get('error')
 
     def connection_closed(self, connection):
         connection.close()
@@ -41,7 +54,7 @@ class Client(object):
                 'request': 'message',
                 'message': ' said @ '+tid+' : '+data
             }
-        # encode to python's type before sending
+        # encode to python before sending
         self.connection.sendall(json.dumps(request))
 
     def force_disconnect(self):

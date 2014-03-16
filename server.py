@@ -42,13 +42,12 @@ class CLientHandler(SocketServer.BaseRequestHandler):
                 print reply, clientname, 'line 42'
                 if('message' in reply) and ('logged in ! ' in reply['message']):
                     clients.append(self)
+                    print 'clients.append self'
                 # send to the client
                 else:
                     self.send(json.dumps(reply))
             elif json_object.get('request') == 'message':
                 if self in clients:
-                    print clientname , 'clientname'
-                    print clientname+json_object.get('message')
                     reply = {
                         'response': 'message',
                         'message': clientname+json_object.get('message')
@@ -69,11 +68,12 @@ class CLientHandler(SocketServer.BaseRequestHandler):
                     onlinenames.remove(clientname)
                     on = False
                 else:
-                    reply = {
+                    thereply = {
                         'response': 'logout',
                         'error': 'Not logged in!',
                         'username': clientname
                     }
+                    self.send(json.dumps(thereply))
             else:
                 if data:
                     print data 
@@ -88,9 +88,7 @@ class CLientHandler(SocketServer.BaseRequestHandler):
     def send (self, data):
         self.connection.sendall(data)
 
-
     def login(self, json_object):
-        print "loggin called ............."
         username = json_object.get('username')
         clientname = ''
         if self.isValidName(username):
@@ -114,10 +112,10 @@ class CLientHandler(SocketServer.BaseRequestHandler):
                 'error': 'Invalid username!',
                 'username': username
             }
-        return reply, clientname#json.dumps(reply)
+        return reply, clientname
 
     def isValidName(self, name):
-        validString = "abcdefghijklmnopqrstuvwxyz_"
+        validString = "abcdefghijklmnopqrstuvwxyz_ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         for c in name:
             if (c not in validString):
                 return False
