@@ -34,6 +34,7 @@ class CLientHandler(SocketServer.BaseRequestHandler):
         while (on):
             # Check if the data exists
             data = self.connection.recv(1024).strip()
+            print data
             # (recv could have returned due to a disconnect)
             # decoding to json object
             json_object = json.loads(data)
@@ -124,6 +125,7 @@ class CLientHandler(SocketServer.BaseRequestHandler):
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     allow_reuse_address = True
 
+#print __name__
 if __name__ == "__main__":
     HOST = 'localhost'
     PORT = 9988

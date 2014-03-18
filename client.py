@@ -14,9 +14,8 @@ class Client(object):
     def start(self, host, port):
         self.connection.connect((host, port))
         messageThread = ReceiveMessageWorker(client, self.connection)
-        messageThread.daemeon = True
         messageThread.start()
-       # print "MessageWorker:",messageThread.name
+        print "MessageWorker:", messageThread.name
 
     def message_received(self,message,connection):
         json_object = json.loads(message)
@@ -52,7 +51,7 @@ class Client(object):
             tid = strftime("%a, %d %b %Y %H:%M:%S", gmtime())
             request = {
                 'request': 'message',
-                'message': ' said @ '+tid+' : '+data
+                'message': ' said @ ' + tid + ' : ' + data
             }
         # encode to python before sending
         self.connection.sendall(json.dumps(request))
@@ -61,16 +60,16 @@ class Client(object):
         self.connection.close()
         print "connection closed!"
 
-
+#print __name__
 if __name__ == "__main__":
     client = Client()
     client.start('localhost', 9988)
-    print "login required, please write 'login <username>'"
-    print "only contain alphanumerical characters and underscores"
+    print "Login required, please write 'login <username>'."
+    print "The username must only contain alphanumerical characters and underscores."
     on = True
     while(on):
-        r = raw_input(': ')
-        if r == 'logout':
+        raw = raw_input(': ')
+        if raw == 'logout':
             on = False
-        client.send(r)
+        client.send(raw)
 client.force_disconnect()        

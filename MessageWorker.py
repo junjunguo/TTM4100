@@ -19,12 +19,13 @@ from threading import Thread
 class ReceiveMessageWorker(Thread):
 
     def __init__(self, listener, connection):
-        self.daemeon = True
+        daemon = True
         self.listener = listener
         self.connection = connection
         super(ReceiveMessageWorker, self).__init__()
+
     def run(self):
         while True:
             data = self.connection.recv(1024).strip()
             if data:
-                self.listener.message_received(data,self.connection)
+                self.listener.message_received(data ,self.connection)
