@@ -42,14 +42,22 @@ class CLientHandler(SocketServer.BaseRequestHandler):
             json_object = json.loads(data)
 
             if json_object.get('request') == 'login':
-                reply, clientname = self.login(json_object)
-                print reply 
-                if (clientname is not ''):
-                    clients.append(self)
-                    print "Client appended!"
-                    print "Online names: ", onlinenames
+                if (self in clients):
+                    thereply = {
+                        'response': 'message',
+                        'message':  'logout befor you login with another name!'
+                        }
+                    self.send(json.dumps(thereply))
+                    reply = ''
                 else:
-                    self.send(json.dumps(reply))
+                    reply, clientname = self.login(json_object)
+                    print reply 
+                    if (clientname is not ''):
+                        clients.append(self)
+                        print "Client appended!"
+                        print "Online names: ", onlinenames
+                    else:
+                        self.send(json.dumps(reply))
 
             elif json_object.get('request') == 'message':
                 if self in clients:
