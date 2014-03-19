@@ -18,14 +18,14 @@ from threading import Thread
 
 class ReceiveMessageWorker(Thread):
 
-    def __init__(self, listener, connection):
-        daemon = True
+    def __init__ (self, listener, connection):
         self.listener = listener
         self.connection = connection
         super(ReceiveMessageWorker, self).__init__()
 
-    def run(self):
-        while True:
-            data = self.connection.recv(1024).strip()
+    def run (self):
+        on = True
+        while (on):
+            data = self.connection.recv(4096)
             if data:
                 self.listener.message_received(data, self.connection)
