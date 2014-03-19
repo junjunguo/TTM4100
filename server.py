@@ -49,6 +49,7 @@ class CLientHandler(SocketServer.BaseRequestHandler):
                     else:
                         reply, clientname = self.login(json_object)
                         self.send(json.dumps(reply))
+                        print reply
                         reply = None
             #-------------------------------------------------
                 elif json_object.get('request') == 'message':
