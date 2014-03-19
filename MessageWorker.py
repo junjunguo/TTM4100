@@ -28,4 +28,4 @@ class ReceiveMessageWorker(Thread):
         while True:
             data = self.connection.recv(1024).strip()
             if data:
-                self.listener.message_received(data ,self.connection)
+                self.listener.message_received(data, self.connection)

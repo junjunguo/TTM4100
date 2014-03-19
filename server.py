@@ -3,6 +3,7 @@ KTN-project 2013 / 2014
 Very simple server implementation that should serve as a basis
 for implementing the chat server
 '''
+
 import SocketServer
 import json
 
@@ -17,6 +18,7 @@ It is instantiated once per connection to the server, and must
 override the handle() method to implement communication to the
 client.
 '''
+
 class CLientHandler(SocketServer.BaseRequestHandler):
 
     def handle(self):
@@ -38,27 +40,30 @@ class CLientHandler(SocketServer.BaseRequestHandler):
             # (recv could have returned due to a disconnect)
             # decoding to json object
             json_object = json.loads(data)
+
             if json_object.get('request') == 'login':
                 reply, clientname = self.login(json_object)
-                print reply, clientname, 'line 42'
-                if('message' in reply) and ('logged in ! ' in reply['message']):
+                print reply, clientname #'line 42'
+                if('message' in reply) and ('logged in!' in reply['message']):
                     clients.append(self)
                     print 'clients.append self'
                 # send to the client
                 else:
                     self.send(json.dumps(reply))
+
             elif json_object.get('request') == 'message':
                 if self in clients:
                     reply = {
                         'response': 'message',
-                        'message': clientname+json_object.get('message')
+                        'message': clientname + json_object.get('message')
                     }
                 else:
-                    thereply = {
+                    reply = {
                         'response': 'message',
                         'error': 'You are not logged in!',
                         }
-                    self.send(json.dumps(thereply))
+                    self.send(json.dumps(reply))
+
             elif json_object.get('request') == 'logout':
                 if (self in clients):
                     reply = {
@@ -86,9 +91,13 @@ class CLientHandler(SocketServer.BaseRequestHandler):
             if reply:
                 for client in clients:
                     client.send(json.dumps(reply))
+
     def send (self, data):
         self.connection.sendall(data)
 
+    def logout(self, json_object):
+        
+        
     def login(self, json_object):
         username = json_object.get('username')
         clientname = ''
@@ -96,10 +105,11 @@ class CLientHandler(SocketServer.BaseRequestHandler):
             if username not in onlinenames:
                 onlinenames.append(username)
                 clientname = username
-                print onlinenames, clientname, 'onlinenames, clientname'
+                print 'clientname: ', clientname
+                print 'onlinenames: ', onlinenames
                 reply = {
                     'response': 'message',
-                    'message': username+' logged in ! '
+                    'message': username + ' logged in!'
                 }
             else:
                 reply = {
@@ -129,8 +139,10 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
 if __name__ == "__main__":
     HOST = 'localhost'
     PORT = 9988
+
     # Create the server, binding to localhost on port 9999
     server = ThreadedTCPServer((HOST, PORT), CLientHandler)
+
     # Activate the server; this will keep running until you
     # interrupt the program with Ctrl-C
     server.serve_forever()

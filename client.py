@@ -17,13 +17,14 @@ class Client(object):
         messageThread.start()
         print "MessageWorker:", messageThread.name
 
-    def message_received(self,message,connection):
+    def message_received(self, message, connection):
         json_object = json.loads(message)
         if (json_object.get('response') == 'message'):
             if 'message' in json_object:
                 print json_object.get('message')
             elif 'error' in json_object:
                 print json_object.get('error')
+
         if (json_object.get('response') == 'logout'):
             if 'username' in json_object:
                 print json_object.get('username'),json_object.get('username')
@@ -33,17 +34,13 @@ class Client(object):
         if (json_object.get('response') == 'login'):
             print json_object.get('username'), json_object.get('error')
 
-    def connection_closed(self, connection):
-        connection.close()
-        print "Connection: "+connection+" closed!"
-
     def send(self, data):
-        if ( data.startswith("login")):
+        if (data.startswith("login")):
             request = {
                 'request': 'login',
                 'username': data[6:]
             }
-        elif ( data.startswith("logout")):
+        elif (data.startswith("logout")):
             request = {
                 'request': 'logout'
             }
@@ -55,6 +52,10 @@ class Client(object):
             }
         # encode to python before sending
         self.connection.sendall(json.dumps(request))
+
+    def connection_closed(self, connection):
+        connection.close()
+        print "Connection: " + connection + " closed!"
 
     def force_disconnect(self):
         self.connection.close()
@@ -69,7 +70,7 @@ if __name__ == "__main__":
     on = True
     while(on):
         raw = raw_input(': ')
-        if raw == 'logout':
-            on = False
+        #if raw == 'logout':
+            #on = False
         client.send(raw)
-client.force_disconnect()        
+client.force_disconnect() 
