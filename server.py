@@ -43,11 +43,10 @@ class CLientHandler(SocketServer.BaseRequestHandler):
 
             if json_object.get('request') == 'login':
                 reply, clientname = self.login(json_object)
-                print reply, clientname #'line 42'
-                if('message' in reply) and ('logged in!' in reply['message']):
+                print reply, clientname #'line 42' 
+                if (clientname is not ''):
                     clients.append(self)
                     print 'clients.append self'
-                # send to the client
                 else:
                     self.send(json.dumps(reply))
 
@@ -65,53 +64,44 @@ class CLientHandler(SocketServer.BaseRequestHandler):
                     self.send(json.dumps(reply))
 
             elif json_object.get('request') == 'logout':
-                if (self in clients):
-                    reply = {
-                        'response': 'logout',
-                        'username': clientname
-                    }
+                reply, clientname = self.logout(json_object)
+                print reply, clientname
+                if (clientname is not ''):
                     clients.remove(self)
-                    onlinenames.remove(clientname)
-                    on = False
+                    print 'clients.remove(self)'
                 else:
-                    reply = {
-                        'response': 'logout',
-                        'error': 'Not logged in!',
-                        'username': clientname
-                    }
-                    self.send(json.dumps(thereply))
+                    self.send(json.dumps(reply))
+
             else:
                 if data:
                     print data 
                 else:
                     print 'Client disconnected!'
                     on = False
-                    onlinenames.remove(clientname)
-            #send response to all clients
-            if reply:
-                for client in clients:
-                    client.send(json.dumps(reply))
 
     def send (self, data):
         self.connection.sendall(data)
 
-    #def logout(self, json_object):
-        #if (self in clients):
-            #reply = {
-                #'response': 'logout',
-                #'username': clientname
-            #}
-            #clients.remove(self)
-            #onlinenames.remove(clientname)
-            #on = False
-        #else:
-            #reply = {
-                #'response': 'logout'
-                #'error': 'Not logged in!'
-                #'username': clientname
-            #}
+    def logout (self, json_object):
+        username = json_object.get('username')
+        clientname = ''
+        if (username in onlinenames):
+            reply = {
+                'response': 'logout',
+                'username': username
+            }
+            onlinenames.remove(username)
+            clientname = username
+            on = False
+        else:
+            reply = {
+                'response': 'logout',
+                'error': 'Not logged in!',
+                'username': username
+            }
+        return reply, clientname
 
-    def login(self, json_object):
+    def login (self, json_object):
         username = json_object.get('username')
         clientname = ''
         if self.isValidName(username):
@@ -121,8 +111,8 @@ class CLientHandler(SocketServer.BaseRequestHandler):
                 print 'clientname: ', clientname
                 print 'onlinenames: ', onlinenames
                 reply = {
-                    'response': 'message',
-                    'message': username + ' logged in!'
+                    'response': 'login',
+                    'username': username
                 }
             else:
                 reply = {

@@ -65,7 +65,9 @@ class Client(object):
 if __name__ == "__main__":
     client = Client()
     client.start('localhost', 9988)
-    print """Login required, please write 'login <username>'.
+    print """
+
+Login required, please write 'login <username>'.
 The username must only contain alphanumerical characters and underscores.
 
 To log out, please write 'logout'.
