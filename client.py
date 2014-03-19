@@ -65,12 +65,17 @@ class Client(object):
 if __name__ == "__main__":
     client = Client()
     client.start('localhost', 9988)
-    print "Login required, please write 'login <username>'."
-    print "The username must only contain alphanumerical characters and underscores."
+    print """Login required, please write 'login <username>'.
+The username must only contain alphanumerical characters and underscores.
+
+To log out, please write 'logout'.
+To exit the client, please write 'exit'."""
     on = True
     while(on):
         raw = raw_input(': ')
-        #if raw == 'logout':
-            #on = False
-        client.send(raw)
+        if raw == 'exit':
+            on = False
+            client.send('logout')
+        else:
+            client.send(raw)
 client.force_disconnect() 

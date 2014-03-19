@@ -74,7 +74,7 @@ class CLientHandler(SocketServer.BaseRequestHandler):
                     onlinenames.remove(clientname)
                     on = False
                 else:
-                    thereply = {
+                    reply = {
                         'response': 'logout',
                         'error': 'Not logged in!',
                         'username': clientname
@@ -95,9 +95,22 @@ class CLientHandler(SocketServer.BaseRequestHandler):
     def send (self, data):
         self.connection.sendall(data)
 
-    def logout(self, json_object):
-        
-        
+    #def logout(self, json_object):
+        #if (self in clients):
+            #reply = {
+                #'response': 'logout',
+                #'username': clientname
+            #}
+            #clients.remove(self)
+            #onlinenames.remove(clientname)
+            #on = False
+        #else:
+            #reply = {
+                #'response': 'logout'
+                #'error': 'Not logged in!'
+                #'username': clientname
+            #}
+
     def login(self, json_object):
         username = json_object.get('username')
         clientname = ''
