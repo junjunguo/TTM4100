@@ -43,10 +43,11 @@ class CLientHandler(SocketServer.BaseRequestHandler):
 
             if json_object.get('request') == 'login':
                 reply, clientname = self.login(json_object)
-                print reply, clientname #'line 42' 
+                print reply 
                 if (clientname is not ''):
                     clients.append(self)
-                    print 'clients.append self'
+                    print "Client appended!"
+                    print "Online names: ", onlinenames
                 else:
                     self.send(json.dumps(reply))
 
@@ -65,10 +66,11 @@ class CLientHandler(SocketServer.BaseRequestHandler):
 
             elif json_object.get('request') == 'logout':
                 reply, clientname = self.logout(json_object)
-                print reply, clientname
-                if (clientname is not ''):
+                print reply
+                if (clientname is not '' or None):
                     clients.remove(self)
-                    print 'clients.remove(self)'
+                    print "Client removed!"
+                    print "Onlinenames: ", onlinenames
                 else:
                     self.send(json.dumps(reply))
 
@@ -91,8 +93,8 @@ class CLientHandler(SocketServer.BaseRequestHandler):
                 'username': username
             }
             onlinenames.remove(username)
+            print "Onlinename removed!"
             clientname = username
-            on = False
         else:
             reply = {
                 'response': 'logout',
@@ -108,8 +110,7 @@ class CLientHandler(SocketServer.BaseRequestHandler):
             if username not in onlinenames:
                 onlinenames.append(username)
                 clientname = username
-                print 'clientname: ', clientname
-                print 'onlinenames: ', onlinenames
+                print "Onlinename appended!"
                 reply = {
                     'response': 'login',
                     'username': username
@@ -130,6 +131,8 @@ class CLientHandler(SocketServer.BaseRequestHandler):
 
     def isValidName(self, name):
         validString = "abcdefghijklmnopqrstuvwxyz_ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        if (len(name) < 1):
+            return False
         for c in name:
             if (c not in validString):
                 return False

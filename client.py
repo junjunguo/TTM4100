@@ -42,7 +42,8 @@ class Client(object):
             }
         elif (data.startswith("logout")):
             request = {
-                'request': 'logout'
+                'request': 'logout',
+                'username': data[7:]
             }
         else:
             tid = strftime("%a, %d %b %Y %H:%M:%S", gmtime())
