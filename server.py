@@ -151,7 +151,7 @@ if __name__ == "__main__":
     HOST = 'localhost'
     PORT = 9000
     server = ThreadedTCPServer((HOST, PORT), CLientHandler)
-    ＃initializes and clears the screen
+    #initializes and clears the screen
     sys.stderr.write("\x1b[2J\x1b[H")
     print "Server initialized!"
     server.serve_forever()
